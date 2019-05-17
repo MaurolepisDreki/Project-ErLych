@@ -1,0 +1,73 @@
+#!/bin/bash
+
+function locate {
+	local vname="PATH_$1"
+	eval $vname=\"$(which $1)\"
+}
+
+function found {
+	local vname="PATH_$1"
+	if [ -z "${!vname}" ]; then
+		locate $1
+	fi
+
+	if [ -z "${!vname}" ]; then
+		return 1
+	else
+		return 0
+	fi
+}
+
+# ACLocal
+if ! found "aclocal"; then
+	if ! found "automake"; then
+		echo "aclocal not found; try installing automake first." >&2
+	else
+		echo "aclocal not found, and it looks it was not bundled with automake..." >&2
+	fi
+	exit 1
+else
+	aclocal || exit $?
+fi
+
+# Libtool
+if ! found "libtoolize"; then 
+	echo "libtoolize not found; please install libtool (used for system-independent libraries)" >&2
+else
+	libtoolize
+fi
+
+# Create config.h.in 
+if [ ! -f "config.h.in" ] || [ "config.h.in" -ot "configure.ac" ]; then
+	if ! found "autoheader"; then 
+		echo "autoheader not found; what?" >&2
+	else
+		autoheader
+	fi
+fi
+
+# (Re)Configure
+if [ ! -f "configure" ] || ! found "autoreconf"; then
+	if ! found "autoreconf"; then
+		echo "autoreconf not found; should be available by automake... using fallback method" >&2
+	fi
+	
+	if ! found "autoconf"; then
+		echo "autoconf not found; try installing the application..." >&2
+		exit 1
+	else
+		autoconf || exit $?
+	fi
+
+	if ! found "automake"; then
+		echo "automake not found; why? didn't we need it for aclocal?" >&2
+		exit 1
+	else
+		automake -a || exit $?
+	fi
+else
+	autoreconf || exit $?
+fi
+
+echo "Build system standing by..."
+
