@@ -7,10 +7,13 @@ AC_CONFIG_HEADERS([config.h]) #< config.h.in is created by autoheader
 #  together in the name of readability.
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
+AC_PROG_CC
 AC_PROG_CXX
 AM_PROG_AR
 
 LT_INIT #< Use Libtool
+
+AC_HEADER_STDBOOL
 
 # NOTE TO SELF:
 #  AC_CONFIG_* take paramaters as [OUT:PRE:PROC:POST], [OUT:PROC], and [OUT]
@@ -20,6 +23,7 @@ LT_INIT #< Use Libtool
 AC_CONFIG_FILES([
 	Makefile
 	libmidget/Makefile
+	libD3B8/Makefile
 ])
 AC_OUTPUT
 

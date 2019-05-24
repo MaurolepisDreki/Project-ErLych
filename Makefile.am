@@ -4,5 +4,5 @@
 #   ...and yes we like recursion because `make -j` is sane, 
 #   working cooperativly with subprocesses to ensure that the 
 #   number of process we specify are not exceeded.
-SUBDIRS= libmidget
+SUBDIRS = libmidget libD3B8
 
